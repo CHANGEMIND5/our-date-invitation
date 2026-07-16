@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>우리 데이트 할래요? 💌</title>
+  <style>
+    :root { --ink:#342437; --plum:#805278; --pink:#f28aaa; --blush:#fff1f4; --cream:#fffaf4; --line:#efd9df; --mint:#dff4e8; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; color:var(--ink); font-family:ui-rounded, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif; background:radial-gradient(circle at 13% 12%, #ffe4eb 0 6%, transparent 23%), radial-gradient(circle at 91% 87%, #e4f5eb 0 5%, transparent 25%), var(--cream); }
+    button, input { font:inherit; }
+    .page { min-height:100vh; display:grid; place-items:center; overflow:hidden; padding:24px; }
+    .shell { width:min(100%, 720px); position:relative; }
+    .sparkle { position:absolute; font-size:26px; animation:float 4s ease-in-out infinite; user-select:none; }
+    .sparkle.a { top:-26px; left:2%; } .sparkle.b { top:18px; right:-5px; animation-delay:-1.5s; } .sparkle.c { bottom:-22px; right:8%; animation-delay:-2.8s; }
+    @keyframes float { 50% { transform:translateY(-11px) rotate(11deg); } }
+    .panel { position:relative; background:rgba(255,255,255,.77); border:1px solid rgba(255,255,255,.94); border-radius:32px; box-shadow:0 22px 70px rgba(105,62,86,.15); padding:clamp(28px,6vw,54px); backdrop-filter:blur(10px); }
+    .screen { display:none; animation:in .38s ease both; }
+    .screen.active { display:block; }
+    @keyframes in { from { opacity:0; transform:translateY(10px) scale(.985); } to { opacity:1; transform:none; } }
+    .eyebrow { margin:0 0 12px; color:var(--plum); font-size:14px; font-weight:800; letter-spacing:.08em; text-align:center; }
+    h1 { margin:0; font-size:clamp(34px,7vw,60px); letter-spacing:-.07em; line-height:1.14; text-align:center; }
+    h2 { margin:0; font-size:clamp(27px,5.2vw,42px); letter-spacing:-.06em; line-height:1.2; text-align:center; }
+    .sub { margin:15px auto 0; max-width:470px; color:#765e70; text-align:center; line-height:1.65; font-size:16px; }
+    .hero-emoji { display:grid; place-items:center; width:104px; height:104px; margin:0 auto 24px; border-radius:50%; background:linear-gradient(145deg,#ffd9e4,#fff7d4); box-shadow:inset -8px -9px 15px rgba(255,255,255,.75); font-size:55px; transform:rotate(-7deg); }
+    .choice-zone { position:relative; height:156px; margin-top:28px; }
+    .choice-zone button { position:absolute; top:18px; min-width:126px; padding:14px 22px; border:0; border-radius:999px; font-weight:800; cursor:pointer; transition:transform .18s ease, box-shadow .18s ease; }
+    .choice-zone button:hover { transform:translateY(-2px); }
+    #yesBtn { left:calc(50% - 139px); background:var(--pink); color:white; box-shadow:0 9px 0 #da668c, 0 13px 25px rgba(207,84,125,.22); }
+    #noBtn { left:calc(50% + 8px); background:#fff; color:#7b5f70; border:1px solid var(--line); z-index:3; }
+    .hint { margin:1px 0 0; color:#a28695; text-align:center; font-size:13px; }
+    .stepper { display:flex; align-items:center; justify-content:center; gap:9px; margin-bottom:30px; }
+    .dot { width:9px; height:9px; border-radius:50%; background:#ead7df; } .dot.on { width:28px; border-radius:99px; background:var(--pink); }
+    .section-label { display:block; margin:30px 0 11px; font-weight:800; font-size:15px; }
+    .calendar { border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:14px 0 12px; }
+    .calendar-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    .month { font-weight:900; letter-spacing:-.03em; }
+    .month-nav { display:flex; gap:5px; }
+    .icon-btn { width:32px; height:32px; border:1px solid var(--line); border-radius:50%; background:white; color:var(--plum); cursor:pointer; }
+    .week, .days { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; text-align:center; }
+    .week { color:#a38595; font-size:12px; font-weight:700; margin-bottom:5px; }
+    .day { height:38px; border:0; border-radius:50%; background:transparent; color:var(--ink); cursor:pointer; font-size:14px; }
+    .day:not(:disabled):hover { background:#ffe8ee; } .day.selected { background:var(--pink); color:white; font-weight:900; box-shadow:0 4px 10px rgba(210,84,124,.25); } .day:disabled { color:#d5c4cc; cursor:default; }
+    .times { display:flex; flex-wrap:wrap; gap:9px; }
+    .time { padding:10px 14px; background:white; border:1px solid var(--line); border-radius:999px; color:#745d6d; cursor:pointer; font-size:14px; font-weight:700; }
+    .time.selected { background:#6f4e69; border-color:#6f4e69; color:#fff; }
+    .footer-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:30px; }
+    .next { padding:13px 21px; border:0; border-radius:999px; background:var(--pink); color:white; box-shadow:0 6px 0 #da668c; cursor:pointer; font-weight:900; } .next:active { transform:translateY(4px); box-shadow:0 2px 0 #da668c; } .next:disabled { opacity:.4; cursor:not-allowed; box-shadow:none; }
+    .food-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:27px; }
+    .food { min-height:77px; display:flex; align-items:center; gap:10px; padding:12px 13px; border:1px solid var(--line); border-radius:18px; background:white; text-align:left; color:var(--ink); cursor:pointer; transition:transform .15s ease,border-color .15s ease,background .15s ease; }
+    .food:hover { transform:translateY(-2px); border-color:#d79ab0; } .food.selected { border:2px solid var(--pink); background:#fff4f7; }
+    .food span { font-size:27px; } .food strong { display:block; font-size:14px; } .food small { color:#967b8b; font-size:11px; }
+    .food-note { margin:13px 0 0; min-height:20px; color:#8c6f80; text-align:center; font-size:13px; }
+    .success { text-align:center; padding:10px 0 2px; }
+    .big-heart { display:grid; place-items:center; width:124px; height:124px; margin:0 auto 22px; border-radius:43% 57% 51% 49% / 43% 44% 56% 57%; background:linear-gradient(145deg,#ffbdcf,#f377a0); color:white; font-size:63px; box-shadow:0 17px 35px rgba(222,90,132,.25); animation:beat 1.5s ease-in-out infinite; }
+    @keyframes beat { 50% { transform:scale(1.07) rotate(4deg); } }
+    .summary { margin:25px auto 0; max-width:420px; padding:17px; border-radius:19px; background:var(--mint); color:#375c4d; line-height:1.7; font-size:15px; }
+    .summary b { font-weight:900; }
+    .sent-status { min-height:22px; margin:14px 0 0; color:#627d6f; font-size:13px; font-weight:700; }
+    .sent-status.error { color:#b14d66; }
+    .again { margin-top:25px; border:0; background:transparent; color:#9a7387; text-decoration:underline; cursor:pointer; }
+    @media (max-width:440px) { .panel { border-radius:25px; padding:29px 20px; } .choice-zone { height:178px; } #yesBtn { left:calc(50% - 132px); } #noBtn { left:calc(50% + 2px); } .food-grid { gap:8px; } .food { padding:10px; } }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="shell">
+      <span class="sparkle a">✦</span><span class="sparkle b">♡</span><span class="sparkle c">✿</span>
+      <section class="panel" aria-live="polite">
+        <div class="screen active" id="welcome">
+          <div class="hero-emoji" aria-hidden="true">💌</div>
+          <p class="eyebrow">TO. YOU</p>
+          <h1>나랑 데이트<br>해주실래요?</h1>
+          <p class="sub">정말로 궁금해서 그래요.<br>부담은 잠깐 내려두고, 솔직하게 골라줘요 ☺</p>
+          <div class="choice-zone" id="choiceZone">
+            <button type="button" id="yesBtn">응, 좋아! ♡</button>
+            <button type="button" id="noBtn" aria-label="아니요">아니요</button>
+          </div>
+          <p class="hint">* 아니요 버튼이 조금 부끄러운가 봐요</p>
+        </div>
+
+        <div class="screen" id="schedule">
+          <div class="stepper" aria-label="2단계 중 1단계"><span class="dot on"></span><span class="dot"></span></div>
+          <p class="eyebrow">OUR LITTLE PLAN</p>
+          <h2>언제가 시간 괜찮아?</h2>
+          <p class="sub">날짜와 시간을 골라줘. 내가 비워둘게!</p>
+          <label class="section-label">날짜</label>
+          <div class="calendar">
+            <div class="calendar-top"><strong class="month" id="monthLabel"></strong><div class="month-nav"><button type="button" class="icon-btn" id="prevMonth" aria-label="이전 달">‹</button><button type="button" class="icon-btn" id="nextMonth" aria-label="다음 달">›</button></div></div>
+            <div class="week"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
+            <div class="days" id="days"></div>
+          </div>
+          <label class="section-label">시간</label>
+          <div class="times" id="times"></div>
+          <div class="footer-actions"><button type="button" class="next" id="scheduleNext" disabled>다음으로 →</button></div>
+        </div>
+
+        <div class="screen" id="food">
+          <div class="stepper" aria-label="2단계 중 2단계"><span class="dot"></span><span class="dot on"></span></div>
+          <p class="eyebrow">THE BEST QUESTION</p>
+          <h2>그날, 어떤 게 땡겨?</h2>
+          <p class="sub">딱 하나만 골라도 되고, 여러 개 골라도 돼!</p>
+          <div class="food-grid" id="foodGrid"></div>
+          <p class="food-note" id="foodNote">마음 가는 메뉴를 눌러줘</p>
+          <div class="footer-actions"><button type="button" class="next" id="foodNext" disabled>약속 확정하기 ♡</button></div>
+        </div>
+
+        <div class="screen" id="done">
+          <div class="success">
+            <div class="big-heart" aria-hidden="true">♥</div>
+            <p class="eyebrow">YAY, IT'S A DATE!</p>
+            <h2>내가 그때<br>데리러 갈게!</h2>
+            <p class="sub">너가 거절하지 않아서 너무 좋아!!<br>이제 그날만 기다리면 된다 ☺</p>
+            <div class="summary" id="summary"></div>
+            <p class="sent-status" id="sentStatus"></p>
+            <button type="button" class="again" id="again">다시 골라보기</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script>
+    // 배포한 Google Apps Script 웹 앱의 /exec 주소를 아래 따옴표 안에 붙여 넣으세요.
+    const GOOGLE_SCRIPT_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+    const screens = ['welcome','schedule','food','done'];
+    const show = id => { screens.forEach(x => document.getElementById(x).classList.toggle('active', x === id)); window.scrollTo({top:0,behavior:'smooth'}); };
+    const noBtn = document.getElementById('noBtn'); const zone = document.getElementById('choiceZone');
+    function flee() { const maxX = zone.clientWidth - noBtn.offsetWidth; const maxY = zone.clientHeight - noBtn.offsetHeight; const yes = document.getElementById('yesBtn'); let x,y,tries=0; do { x = Math.max(0, Math.random()*maxX); y = Math.max(2, Math.random()*maxY); tries++; } while (tries < 12 && Math.abs(x - yes.offsetLeft) < 125 && Math.abs(y - yes.offsetTop) < 54); noBtn.style.left = x+'px'; noBtn.style.top = y+'px'; }
+    noBtn.addEventListener('pointerenter', flee); noBtn.addEventListener('pointerdown', e => { e.preventDefault(); flee(); }); noBtn.addEventListener('focus', flee); document.getElementById('yesBtn').addEventListener('click', () => show('schedule'));
+
+    const monthLabel = document.getElementById('monthLabel'), days = document.getElementById('days');
+    const today = new Date(); today.setHours(0,0,0,0); let view = new Date(today.getFullYear(), today.getMonth(), 1); let pickedDate = null, pickedTime = null;
+    const formatDate = d => `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
+    function renderCalendar() { monthLabel.textContent = `${view.getFullYear()}년 ${view.getMonth()+1}월`; days.innerHTML=''; const first = new Date(view.getFullYear(),view.getMonth(),1).getDay(); const count = new Date(view.getFullYear(),view.getMonth()+1,0).getDate(); for(let i=0;i<first;i++) days.appendChild(document.createElement('span')); for(let n=1;n<=count;n++){ const d=new Date(view.getFullYear(),view.getMonth(),n); const b=document.createElement('button'); b.type='button'; b.className='day'; b.textContent=n; if(d<today){b.disabled=true;} if(pickedDate && d.getTime()===pickedDate.getTime()) b.classList.add('selected'); b.addEventListener('click',()=>{pickedDate=d; renderCalendar(); readySchedule();}); days.appendChild(b); } }
+    document.getElementById('prevMonth').addEventListener('click',()=>{ const prior=new Date(view.getFullYear(),view.getMonth()-1,1); if(prior >= new Date(today.getFullYear(),today.getMonth(),1)){view=prior;renderCalendar();} }); document.getElementById('nextMonth').addEventListener('click',()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);renderCalendar();});
+    const timeOptions=['12:00 점심','14:00 카페','17:00 산책','18:30 저녁','20:00 야식']; const times=document.getElementById('times'); timeOptions.forEach(t=>{const b=document.createElement('button');b.type='button';b.className='time';b.textContent=t;b.addEventListener('click',()=>{pickedTime=t;[...times.children].forEach(x=>x.classList.remove('selected'));b.classList.add('selected');readySchedule();});times.appendChild(b);}); function readySchedule(){document.getElementById('scheduleNext').disabled=!(pickedDate&&pickedTime)}; document.getElementById('scheduleNext').addEventListener('click',()=>show('food'));
+
+    const foods=[['🍝','파스타','분위기 있게'],['🍣','스시','깔끔하고 맛있게'],['🥩','고기','든든하게'],['🍕','피자','편하게 나눠 먹기'],['🌮','멕시칸','조금 색다르게'],['🍜','국수','따뜻하고 편안하게'],['🍔','햄버거','캐주얼하게'],['🥘','한식','역시 익숙한 맛'],['🥞','브런치','느긋하게'],['🧁','디저트','달콤하게 마무리']]; const selectedFoods=new Set(), grid=document.getElementById('foodGrid'); foods.forEach(([emoji,name,desc])=>{const b=document.createElement('button');b.type='button';b.className='food';b.setAttribute('aria-pressed','false');b.innerHTML=`<span aria-hidden="true">${emoji}</span><span><strong>${name}</strong><small>${desc}</small></span>`;b.addEventListener('click',()=>{if(selectedFoods.has(name)){selectedFoods.delete(name);b.classList.remove('selected');b.setAttribute('aria-pressed','false')}else{selectedFoods.add(name);b.classList.add('selected');b.setAttribute('aria-pressed','true')} const n=selectedFoods.size;document.getElementById('foodNote').textContent=n?`${n}개 선택했어 ${n>1?'— 취향 완전 이해했어!':'— 좋은 선택이야!'}`:'마음 가는 메뉴를 눌러줘';document.getElementById('foodNext').disabled=!n;});grid.appendChild(b);});
+    async function submitSelection() {
+      if (!GOOGLE_SCRIPT_URL.startsWith('https://script.google.com/')) throw new Error('연결 주소가 아직 설정되지 않았어요.');
+      const data = new URLSearchParams({
+        submittedAt: new Date().toLocaleString('ko-KR'),
+        date: formatDate(pickedDate),
+        time: pickedTime,
+        foods: [...selectedFoods].join(', ')
+      });
+      await fetch(GOOGLE_SCRIPT_URL, { method:'POST', mode:'no-cors', body:data });
+    }
+    document.getElementById('foodNext').addEventListener('click', async () => {
+      const button = document.getElementById('foodNext'); button.disabled=true; button.textContent='약속 전송 중…';
+      document.getElementById('summary').innerHTML=`<b>${formatDate(pickedDate)}</b> · <b>${pickedTime}</b><br>${[...selectedFoods].join(' · ')} 먹으러 가자!`;
+      const status = document.getElementById('sentStatus'); status.className='sent-status';
+      try { await submitSelection(); status.textContent='선택한 약속을 저장하고 알림도 보냈어!'; }
+      catch (error) { status.classList.add('error'); status.textContent='약속 내용은 보이지만, 자동 전송 설정을 확인해줘.'; }
+      show('done'); button.textContent='약속 확정하기 ♡'; button.disabled=false;
+    }); document.getElementById('again').addEventListener('click',()=>show('schedule')); renderCalendar();
+  </script>
+</body>
+</html>
