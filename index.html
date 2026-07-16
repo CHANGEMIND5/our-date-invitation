@@ -121,7 +121,7 @@
   </main>
   <script>
     // 배포한 Google Apps Script 웹 앱의 /exec 주소를 아래 따옴표 안에 붙여 넣으세요.
-    const GOOGLE_SCRIPT_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXnI7KlY0uxRYNmMkq-oVUb7ZOXeObvIkQKbFXipuE8ZfpnUSWKuPcIoLNLeBH_zoL/exec';
     const screens = ['welcome','schedule','food','done'];
     const show = id => { screens.forEach(x => document.getElementById(x).classList.toggle('active', x === id)); window.scrollTo({top:0,behavior:'smooth'}); };
     const noBtn = document.getElementById('noBtn'); const zone = document.getElementById('choiceZone');
